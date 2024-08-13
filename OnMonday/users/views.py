@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -191,8 +191,9 @@ class EventDetailView(views.APIView):
         """
             Регистрация на мероприятие
         """
-        event = UserEvents.objects.get(pk=pk)
-        if event is None:
+        try:
+            event = get_object_or_404(UserEvents, pk=pk)
+        except UserEvents.DoesNotExist:
             return Response({'error': 'Событие не найдено'}, status=status.HTTP_404_NOT_FOUND)
 
         user = request.user
